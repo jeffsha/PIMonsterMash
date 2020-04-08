@@ -21,22 +21,18 @@ namespace PIMonsterMash
             Console.BufferWidth = 80;
             Console.BufferHeight = 25;
 
-            SoundPlayer soundDevice = new SoundPlayer();
-            soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-            soundDevice.PlayLooping();            
-
             // Setup Player Name
             Console.WriteLine("Please enter your player name:");
             var playerName = Console.ReadLine();
 
             var player = EntityFactory.Create<Player>(playerName, 25000);
 
-            Console.WriteLine("Please enter your PI Server:");
-            var serverName = Console.ReadLine();
+            //Console.WriteLine("Please enter your PI Server:");
+            //var serverName = Console.ReadLine();
 
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
-            SetupPIPoints(playerName, serverName);
+            // SetupPIPoints(playerName, serverName);
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             var currentKey = new ConsoleKeyInfo();
@@ -44,19 +40,21 @@ namespace PIMonsterMash
             Console.WriteLine("Press H to attack, X to Leave the game!");
 
             // Generate Monster Factory
-            List<Monster> monsters = new List<Monster>();
-            monsters.Add(EntityFactory.Create<Monster>("Monster1"));
+            Monster monster = EntityFactory.Create<Monster>("Monster1");
 
             while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
-            {               
+            {
                 // While Monster isAlive
+                monster.Spawned += (sender) => {
+                    MusicPlayer.play((sender as Entity).MusicPath);
+                };
+
+                monster.spawn();
 
                 // DO X, DO Y - Attack Monster
                 // Roll Damage
 
                 // Monster Spawn - Factory?
-                soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-                soundDevice.PlayLooping();
 
                 // Updating UI
                 // First Draw - ASCII Monster Art Monster Health Player Health
