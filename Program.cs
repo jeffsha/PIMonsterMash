@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OSIsoft.AF;
-using OSIsoft.AF.Asset;
-using OSIsoft.AF.Data;
 using OSIsoft.AF.PI;
-using PIMonsterMash;
-using System.Media;
 using PIMonsterMash.Entities;
 
-namespace PIMonsterMash {
+namespace PIMonsterMash
+{
     class Program {
         const int playerMaxHP = 25000;
         static Monster monster;
@@ -20,94 +15,98 @@ namespace PIMonsterMash {
         static bool playerDied = false;
         static bool playerQuit;
 
-        static void Main(string[] args) {
-            Console.SetWindowSize(80, 25);
-            Console.BufferWidth = 80;
-            Console.BufferHeight = 25;
-            Console.SetWindowSize(120, 35);
-            Console.BufferWidth = 120;
-            Console.BufferHeight = 35;
+        static void Main(string[] args)
+        {
+            //Show splash screen
 
-            // Setup Player Name
-            Console.WriteLine("Please enter your player name:");
-            var playerName = Console.ReadLine();
+            //Required Console Dimensions
+            InitializeConsole();
 
-            player = EntityFactory.Create<Player>(playerName, playerMaxHP);
+            SpawnPlayer();
 
-            //Console.WriteLine("Please enter your PI Server:");
+            //Console.Write("Please enter your PI Server:");
             //var serverName = Console.ReadLine();
 
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
 
-            // statsManager = new StatsManager(playerName, serverName);
-
-            // statsManager.IntializePlayerStats();
+            //statsManager = new StatsManager(player.Name, serverName);
+            //statsManager.IntializePlayerStats();
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
 
             Console.WriteLine("Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!");
 
-            // Generate Monster Factory
+            // Spawn first monster
             monster = SpawnMonster(player);
 
-            playerQuit = Console.ReadKey().Equals(terminationKey);
+            // playerQuit = Console.ReadKey().Equals(terminationKey);
 
-            int playerHealth = 1;
-            while (playerHealth > 0) {
-                // Spawn Monster
-                // Monster Spawn - Factory?
-
-                // Select Monster
-                var rand = new Random();
-
-                int damageToMonster = 0;
-                // Waiting for input
-                while (!(currentKey = Console.ReadKey()).Equals(terminationKey)) {
-                    switch (currentKey.Key) {
-                        // Roll Big Attack!
-                        case ConsoleKey.S:
-                            if (DiceBag.RollD20() > 16) {
-                                damageToMonster = DiceBag.RollD12();
-                            }
-                            break;
-                        // Roll Attack
-                        case ConsoleKey.A:
-                            if (DiceBag.RollD20() > 13) {
-                                damageToMonster = DiceBag.RollD8();
-                            }
-                            break;
-                        // Roll Fire Attack
-                        case ConsoleKey.F:
-                            if (DiceBag.RollD20() > 10) {
-                                damageToMonster = DiceBag.RollD20();
-                            }
-                            break;
-                        // Run away from monster ?
-                        case ConsoleKey.R:
-                            // Skip Monster
-                            break;
-                    }
-
-                    // Damage to Monster
-                    DamageMonster(damageToMonster, monster, player);
-
-                    // Check if Monster isAlive
-
-                    // DO X, DO Y - Attack Monster
-                    // Roll Damage
-                    var attackRoll = DiceBag.RollD20();
-                    statsManager.UpdateAttackRollStat(attackRoll);
-
-                    // Monster Turn
-                    player.Damage(DiceBag.RollD8());
-                    DrawUI(monster, player, "The Monster attacks! Press H to attack again.");
-
-                    damageToMonster = 0;
+            var damage = 0;
+            // Waiting for input
+            while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
+            {
+                switch (currentKey.Key)
+                {
+                    // Roll Big Attack!
+                    case ConsoleKey.S:
+                        if (DiceBag.RollD20() > 16)
+                        {
+                            damage = DiceBag.RollD12();
+                        }
+                        break;
+                    // Roll Attack
+                    case ConsoleKey.A:
+                        if (DiceBag.RollD20() > 13)
+                        {
+                            damage = DiceBag.RollD8();
+                        }
+                        break;
+                    // Roll Fire Attack
+                    case ConsoleKey.F:
+                        if (DiceBag.RollD20() > 10)
+                        {
+                            damage = DiceBag.RollD20();
+                        }
+                        break;
+                    // Run away from monster ?
+                    case ConsoleKey.R:
+                        // Skip Monster
+                        break;
                 }
-                playerHealth = 0;
+
+                monster.Damage(damage);
+
+                // Monster Turn
+                player.Damage(DiceBag.RollD8());
             }
+        }
+
+        private static void InitializeConsole()
+        {
+            Console.SetWindowSize(120, 35);
+            Console.BufferWidth = 120;
+            Console.BufferHeight = 35;
+        }
+
+        #region Spawn Entities
+        private static void SpawnPlayer()
+        {
+            Console.Write("Please enter your player name: ");
+            player = EntityFactory.Create<Player>(Console.ReadLine(), playerMaxHP);
+
+            player.Spawned += (sender) =>
+            {
+
+            };
+
+            player.Damaged += (sender, e) =>
+            {
+
+            };
+
+            player.Spawn();
         }
 
         public static Monster SpawnMonster(Player player) {
@@ -117,18 +116,22 @@ namespace PIMonsterMash {
                 MusicPlayer.Play(entity.MusicPath);
             };
 
-            monster.Damaged += (entity) => {
+            monster.Damaged += (entity, e) => {
                 // If Monster is dead and player is alive, spawn new monster
                 if (entity.Health <= 0 && player.Health > 0) {
                     MusicPlayer.Stop();
                     monster = SpawnMonster(player);
+                    //If monster and player are still alive, update ui
+                } else if (entity.Health > 0 && player.Health > 0)
+                {
+                    DamageMonster(e.Damage, (Monster)entity, player);
                 }
             };
 
             monster.Spawn();
-
             return monster;
         }
+        #endregion  
 
         public static void DamageMonster(int damageToMonster, Monster currentMonster, Player currentPlayer) {
             Console.Clear();
@@ -139,24 +142,23 @@ namespace PIMonsterMash {
             Console.ReadKey();
         }
 
-        public static void DrawUI(Monster m, Player p, string action) {
+        public static void DrawUI(Monster monster, Player player, string action) {
             {
-                // clear screen, draw basic text ui	            // clear screen, draw basic text ui
-                Console.Clear(); Console.Clear();
-                Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center); Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
-                Utils.AlignText("Monster Name", Utils.LineLocation.Center, 50, 50, ConsoleColor.Red);
-                foreach (string line in m.Art)              // TODO: Need also a max hp
-                    Utils.AlignText(m.Name, Utils.LineLocation.Center, m.Health, 50, ConsoleColor.Red);
+                // clear screen, draw basic text ui	            
+                Console.Clear(); 
+                Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
+                Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, 50, ConsoleColor.Red);
+
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine();
-                string spaces = new string(' ', 30);
-                foreach (string line in m.Art) {
+                var spaces = new string(' ', 30);
+                foreach (string line in monster.Art) {
                     {
-                        Utils.AlignText(line, Utils.LineLocation.Center); Console.WriteLine(spaces + line);
+                        Console.WriteLine(spaces + line);
                     }
                 }
-                Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green); Utils.AlignText(p.Name, Utils.LineLocation.BottomRight, p.Health, playerMaxHP, ConsoleColor.Green);
+                Utils.AlignText(player.Name, Utils.LineLocation.BottomRight, player.Health, playerMaxHP, ConsoleColor.Green);
                 Console.WriteLine();
                 Console.WriteLine(action);
                 // todo: prompt for hit roll?
