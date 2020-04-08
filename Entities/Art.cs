@@ -51,7 +51,7 @@ namespace PIMonsterMash {
             artList.Add(1, wizard);
         }
 
-        public static List<string> getRandom() {
+        public static List<string> GetRandom() {
             var rnd = new Random(DateTime.Now.Millisecond);
             return artList[rnd.Next(0, artList.Count)];
         }

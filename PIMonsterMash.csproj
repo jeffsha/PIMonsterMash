@@ -49,6 +49,7 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
     <Compile Include="Entities\Monster.cs" />
+    <Compile Include="Entities\MusicPlayer.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,9 +61,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-	<Content Include="Forest.wav">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
+    <Content Include="Forest.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
