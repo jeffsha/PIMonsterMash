@@ -15,24 +15,31 @@ namespace PIMonsterMash
 {
     class Program
     {
+        const int playerMaxHP = 25000;
+
         static void Main(string[] args)
         {
-            Console.SetWindowSize(80, 25);
-            Console.BufferWidth = 80;
-            Console.BufferHeight = 25;
+            Console.SetWindowSize(120, 35);
+            Console.BufferWidth = 120;
+            Console.BufferHeight = 35;
 
             SoundPlayer soundDevice = new SoundPlayer();
             soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-            //soundDevice.PlayLooping();            
+            soundDevice.PlayLooping();
 
             // Setup Player Name
             Console.WriteLine("Please enter your player name:");
             var playerName = Console.ReadLine();
 
-            var player = EntityFactory.Create<Player>(playerName, 25000);
+            var player = EntityFactory.Create<Player>(playerName, playerMaxHP);
 
             Console.WriteLine("Please enter your PI Server:");
             var serverName = Console.ReadLine();
+
+            //var playerName = "Player1";
+            //var serverName = Environment.MachineName;
+            //var player = EntityFactory.Create<Player>(playerName, playerMaxHP);
+
 
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
@@ -40,56 +47,71 @@ namespace PIMonsterMash
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             var currentKey = new ConsoleKeyInfo();
-
-            Console.WriteLine("Press H to attack, X to Leave the game!");
+            Console.WriteLine("Game loaded, press any key to continue!");
 
             // Generate Monster Factory
-            List<Monster> monsters = new List<Monster>();
-            monsters.Add(EntityFactory.Create<Monster>("Monster1"));
+            bool playerQuit = Console.ReadKey().Equals(terminationKey);
+            bool playerDied = false;
 
-            while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
+            while (!playerQuit && !playerDied)
             {
-                foreach (Monster monster in monsters)
+                var monster = EntityFactory.Create<Monster>("Monster");
+                while (monster.Health > 0 && !playerQuit && !playerDied)
                 {
-                    // While Monster isAlive
-
-                    // DO X, DO Y - Attack Monster
-                    // Roll Damage
-
-                    // Monster Spawn - Factory?
-                    soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-                    //soundDevice.PlayLooping();
-
-                    // Updating UI
-                    // First Draw - ASCII Monster Art Monster Health Player Health
-                    // LOOPED
-                    // Attack of PLayer - Monster Health Updates Redraw
-                    // Action Text -> Player Does X Damage, Instructions hit x to do damage
-                    // Attack of Monster - Player Health Updates Redraw                
-                    // Action Text -> Monster Does X Damage
+                    // try to kill the monster
                     Console.Clear();
-                    DrawUI(monster, player);
+                    DrawUI(monster, player, "Press H to attack, X to Leave the game!");
+                    var key = Console.ReadKey();
+                    monster.Damage(10000);
 
-                    // Monster Attack Player
-                    // Reset
+                    player.Damage(500);
+                    if (player.Health > 0)
+                    {
+                        DrawUI(monster, player, "The Monster attacks! Press H to attack again.");
+                        key = Console.ReadKey();
+                    }
+                    else
+                    {
+                        DrawUI(monster, player, "You have died!");
+                        playerDied = true;
+                    }
 
-                    // Calculate Monster Death
-                    // Calculate Player Death
+                    if (key == terminationKey)
+                    {
+                        playerQuit = true;
+                        //break;
+                    }
                 }
             }
+
+            if (playerQuit)
+                Console.WriteLine("Thanks for playing!");
+            else if (playerDied)
+                Console.WriteLine("Better luck next time :(");
+            Console.ReadLine();
         }
 
-        public static void DrawUI(Monster m, Player p)
+        public static void DrawUI(Monster m, Player p, string action)
         {
             // clear screen, draw basic text ui
             Console.Clear();
             Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
-            Utils.AlignText("Monster Name", Utils.LineLocation.Center, 50, 50, ConsoleColor.Red);
-            foreach(string line in m.Art)
+
+            // TODO: Need also a max hp
+            Utils.AlignText(m.Name, Utils.LineLocation.Center, m.Health, 50, ConsoleColor.Red);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            string spaces = new string(' ', 30);
+            foreach (string line in m.Art)
             {
-                Utils.AlignText(line, Utils.LineLocation.Center);
+                Console.WriteLine(spaces + line);
             }
-            Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green);
+            Utils.AlignText(p.Name, Utils.LineLocation.BottomRight, p.Health, playerMaxHP, ConsoleColor.Green);
+            Console.WriteLine();
+            Console.WriteLine(action);
+            // todo: prompt for hit roll?
+            // todo: prompt for damage roll?
         }
 
         static void SetupPIPoints(string playerName, string serverName)
@@ -100,7 +122,7 @@ namespace PIMonsterMash
 
             // PlayerName - Assuming full name/Unique name
             // Try to create if not exist
-            var points = PIPoint.FindPIPoints(currentPIServer, playerName + "*");            
+            var points = PIPoint.FindPIPoints(currentPIServer, playerName + "*");
 
             if (points.Count() < 1)
             {
