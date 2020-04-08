@@ -31,7 +31,7 @@ namespace PIMonsterMash
             Console.WriteLine("Please enter your player name:");
             var playerName = Console.ReadLine();
 
-            var player = EntityFactory.Create<Player>(playerName, 25000);
+            var currentPlayer = EntityFactory.Create<Player>(playerName, 25000);
 
             Console.WriteLine("Please enter your PI Server:");
             var serverName = Console.ReadLine();
@@ -49,6 +49,9 @@ namespace PIMonsterMash
             Console.WriteLine("Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!");
 
             // Generate Monster Factory
+            List<Monster> monsters = new List<Monster>();
+            monsters.Add(EntityFactory.Create<Monster>("Monster1"));
+
             int playerHealth = 1;
             while (playerHealth > 0)
             {
@@ -57,7 +60,8 @@ namespace PIMonsterMash
                 soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
                 soundDevice.PlayLooping();
 
-                // Draw Monster
+                // Select Monster
+                Monster currentMonster = monsters[DiceBag.rand.Next(0, monsters.Count)];
 
                 bool attackSuccess = false;
                 int damageToMonster = 0;
@@ -94,7 +98,7 @@ namespace PIMonsterMash
                     }
 
                     // Damage to Monster
-                    DamageMonster(damageToMonster);
+                    DamageMonster(damageToMonster, currentMonster, currentPlayer);
 
                     // Check if Monster isAlive
 
@@ -103,7 +107,7 @@ namespace PIMonsterMash
                     var attackRoll = DiceBag.RollD20();
                     statsManager.UpdateAttackRollStat(attackRoll);
                     // Monster Turn
-                    MonsterTurn();
+                    MonsterTurn(currentMonster, currentPlayer);
 
                     damageToMonster = 0;
                 }
@@ -111,33 +115,33 @@ namespace PIMonsterMash
             }
         }
 
-        public static void DamageMonster(int damageToMonster)
+        public static void DamageMonster(int damageToMonster, Monster currentMonster, Player currentPlayer)
         {
             Console.Clear();
-            DrawUI();
+            DrawUI(currentMonster, currentPlayer);
 
             Console.Write("Player Dealt " + damageToMonster + " damage!");
             Console.Write("Press Any Button To Continue");
             Console.ReadKey();
         }
 
-        public static void MonsterTurn()
+        public static void MonsterTurn(Monster currentMonster, Player currentPlayer)
         {
             int playerDamage = DiceBag.RollD8();
 
             // Calculate Player LIfe
 
             Console.Clear();
-            DrawUI();            
+            DrawUI(currentMonster, currentPlayer);            
         }
 
-        public static void DrawUI(Monster m, Player p)
+        public static void DrawUI(Monster currentMonster, Player currentPlayer)
         {
             // clear screen, draw basic text ui
             Console.Clear();
             Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
             Utils.AlignText("Monster Name", Utils.LineLocation.Center, 50, 50, ConsoleColor.Red);
-            foreach(string line in m.Art)
+            foreach(string line in currentMonster.Art)
             {
                 Utils.AlignText(line, Utils.LineLocation.Center);
             }

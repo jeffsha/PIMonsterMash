@@ -8,7 +8,7 @@ namespace PIMonsterMash
 {
     static class DiceBag
     {
-        private static Random rand = new Random();
+        public static Random rand = new Random();
 
         public static int RollD4()
         {
