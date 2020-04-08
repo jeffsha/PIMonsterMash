@@ -9,6 +9,7 @@ using OSIsoft.AF.Data;
 using OSIsoft.AF.PI;
 using PIMonsterMash;
 using System.Media;
+using PIMonsterMash.Entities;
 
 namespace PIMonsterMash
 {
@@ -28,6 +29,8 @@ namespace PIMonsterMash
             Console.WriteLine("Please enter your player name:");
             var playerName = Console.ReadLine();
 
+            var player = EntityFactory.Create<Player>(playerName, 25000);
+
             Console.WriteLine("Please enter your PI Server:");
             var serverName = Console.ReadLine();
 
@@ -41,6 +44,8 @@ namespace PIMonsterMash
             Console.WriteLine("Press H to attack, X to Leave the game!");
 
             // Generate Monster Factory
+            List<Monster> monsters = new List<Monster>();
+            monsters.Add(EntityFactory.Create<Monster>("Monster1"));
 
             while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
             {               
