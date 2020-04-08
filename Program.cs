@@ -30,5 +30,24 @@ namespace PIMonsterMash
             Console.WriteLine("Roll for your chance to succeed on _____!!!");
             Console.WriteLine(DiceBag.RollD100());
         }
+
+        /// <summary>
+        /// HP of Monster top center
+        ///        Monster
+        ///        Hp of player bottom right
+        /// Instructions: SOME TEXT
+        /// TODO: Move to a utils file
+        /// </summary>
+        public static void DrawUI()
+        {
+            // clear screen, draw basic text ui
+            Console.Clear();
+
+        }
+
+        public static void CenterText(string s)
+        {
+
+        }
     }
 }
