@@ -14,7 +14,11 @@ namespace PIMonsterMash
     {
         static void Main(string[] args)
         {
-            Console.Write("Welcome to The PI Monster Mash!!!");
+            Console.SetWindowSize(80, 25);
+            Console.BufferWidth = 80;
+            Console.BufferHeight = 25;
+            CenterText("Welcome to The PI Monster Mash!!!");
+            DrawUI();
             Console.ReadLine();
         }
 
@@ -28,13 +32,37 @@ namespace PIMonsterMash
         public static void DrawUI()
         {
             // clear screen, draw basic text ui
-            Console.Clear();
-
+            //Console.Clear();
+            CenterText("Monster 1", 50, 50, ConsoleColor.Red);
+            BottomRightText("Player Name", 25, 25, ConsoleColor.Green);
         }
 
-        public static void CenterText(string s)
+        public static void BottomRightText(string s, int hpCurrent = -1, int hpMax = -1, ConsoleColor textColor = ConsoleColor.White)
         {
+            Console.ForegroundColor = textColor;
+            if (hpCurrent != -1 && hpMax != -1)
+            {
+                s = $"{s} HP: {hpCurrent}/{hpMax}";
+            }
 
+            Console.SetCursorPosition((Console.WindowWidth - s.Trim().Length), Console.BufferHeight - 5);
+            Console.WriteLine(s);
+            Console.ResetColor();
+        }
+
+        public static void CenterText(string s, int hpCurrent = -1, int hpMax = -1, ConsoleColor textColor = ConsoleColor.White)
+        {
+            Console.ForegroundColor = textColor;
+            Console.WriteLine();
+
+            if (hpCurrent != -1 && hpMax != -1)
+            {
+                s = $"{s} HP: {hpCurrent}/{hpMax}";
+            }
+
+            Console.SetCursorPosition((Console.WindowWidth - s.Trim().Length) / 2, Console.CursorTop);
+            Console.WriteLine(s.Trim());
+            Console.ResetColor();
         }
     }
 }
