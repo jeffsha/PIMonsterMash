@@ -9,9 +9,9 @@ namespace PIMonsterMash.Entities {
         public static T Create<T>(string name, int health = -1, string musicPath = null) where T : Entity, new() {
             var entity = new T();
             var pHealth = (health < 0 ? new Random().Next(1000, 100000) : health);
-            var pArt = (entity.Art ?? Art.getRandom());
-            var pMusic = (musicPath ?? MusicPlayer.getRandom());
-            entity.init(name, pHealth, pArt, pMusic);
+            var pArt = (entity.Art ?? Art.GetRandom());
+            var pMusic = (musicPath ?? MusicPlayer.GetRandom());
+            entity.Init(name, pHealth, pArt, pMusic);
             return entity;
         }
     }
