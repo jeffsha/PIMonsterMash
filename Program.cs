@@ -61,7 +61,8 @@ namespace PIMonsterMash
                 soundDevice.PlayLooping();
 
                 // Select Monster
-                Monster currentMonster = monsters[DiceBag.rand.Next(0, monsters.Count)];
+                var rand = new Random();
+                Monster currentMonster = monsters[rand.Next(0, monsters.Count)];
 
                 bool attackSuccess = false;
                 int damageToMonster = 0;
