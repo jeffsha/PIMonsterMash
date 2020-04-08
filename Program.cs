@@ -23,9 +23,12 @@ namespace PIMonsterMash
             Console.WriteLine("Please enter your player name:");
             var playerName = Console.ReadLine();
 
+            Console.WriteLine("Please enter your PI Server:");
+            var serverName = Console.ReadLine();
+
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
-            SetupPIPoints(playerName);
+            SetupPIPoints(playerName, serverName);
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             var currentKey = new ConsoleKeyInfo();
@@ -49,11 +52,11 @@ namespace PIMonsterMash
             Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green);
         }
 
-        static void SetupPIPoints(string playerName)
+        static void SetupPIPoints(string playerName, string serverName)
         {
             // Setup PI Tags
-            var currentPISystem = PISystem.CreatePISystem("BSIMPSON55302", true);
-            var currentPIServer = PIServer.FindPIServer(currentPISystem, "BSIMPSON55302");
+            var currentPISystem = PISystem.CreatePISystem(serverName, true);
+            var currentPIServer = PIServer.FindPIServer(currentPISystem, serverName);
 
             // PlayerName - Assuming full name/Unique name
             // Try to create if not exist
