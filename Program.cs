@@ -7,6 +7,7 @@ using OSIsoft.AF;
 using OSIsoft.AF.Asset;
 using OSIsoft.AF.Data;
 using OSIsoft.AF.PI;
+using PIMonsterMash;
 
 namespace PIMonsterMash
 {
@@ -14,40 +15,68 @@ namespace PIMonsterMash
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to The PI Monster Mash!!!\n");
+            Console.SetWindowSize(80, 25);
+            Console.BufferWidth = 80;
+            Console.BufferHeight = 25;            
 
-            //Console.WriteLine();
-            Console.WriteLine("Ye find ye-self in yon Security Guild\n");
+            // Setup Player Name
+            Console.WriteLine("Please enter your player name:");
+            var playerName = Console.ReadLine();
 
-            Console.WriteLine("Thy Dice Bag API\n");
+            Console.WriteLine("Please enter your PI Server:");
+            var serverName = Console.ReadLine();
 
-            Console.WriteLine("Roll to hit!!!");
-            Console.WriteLine(DiceBag.RollD20());
+            Console.Clear();
+            Console.WriteLine("Loading Game, Please Wait...");
+            SetupPIPoints(playerName, serverName);
 
-            Console.WriteLine("Roll for damage!!!");
-            Console.WriteLine(DiceBag.RollD6());
+            var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
+            var currentKey = new ConsoleKeyInfo();
 
-            Console.WriteLine("Roll for your chance to succeed on _____!!!");
-            Console.WriteLine(DiceBag.RollD100());
+            Console.WriteLine("Press H to attack, X to Leave the game!");
+
+            while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
+            {
+                // Clear Screen
+                Console.Clear();
+                DrawUI();                
+            }
         }
 
-        /// <summary>
-        /// HP of Monster top center
-        ///        Monster
-        ///        Hp of player bottom right
-        /// Instructions: SOME TEXT
-        /// TODO: Move to a utils file
-        /// </summary>
         public static void DrawUI()
         {
             // clear screen, draw basic text ui
             Console.Clear();
-
+            Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
+            Utils.AlignText("Monster Name", Utils.LineLocation.Center, 50, 50, ConsoleColor.Red);
+            Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green);
         }
 
-        public static void CenterText(string s)
+        static void SetupPIPoints(string playerName, string serverName)
         {
+            // Setup PI Tags
+            var currentPISystem = PISystem.CreatePISystem(serverName, true);
+            var currentPIServer = PIServer.FindPIServer(currentPISystem, serverName);
 
+            // PlayerName - Assuming full name/Unique name
+            // Try to create if not exist
+            var points = PIPoint.FindPIPoints(currentPIServer, playerName + "*");            
+
+            if (points.Count() < 1)
+            {
+                IDictionary<string, object> intAttributeProperties = new Dictionary<string, object> {
+                    { PICommonPointAttributes.PointType, PIPointType.Int32 },
+                    { PICommonPointAttributes.Compressing, 0 },
+                    { PICommonPointAttributes.Shutdown, 0 }
+                };
+
+                IDictionary<string, IDictionary<string, object>> pointsAttributesTable = new Dictionary<string, IDictionary<string, object>>();
+                pointsAttributesTable.Add(playerName + "Score", intAttributeProperties);
+                pointsAttributesTable.Add(playerName + "Rolls", intAttributeProperties);
+                pointsAttributesTable.Add(playerName + "Turns", intAttributeProperties);
+
+                currentPIServer.CreatePIPoints(pointsAttributesTable);
+            }
         }
     }
 }
