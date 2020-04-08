@@ -17,6 +17,8 @@ namespace PIMonsterMash
     {
         static void Main(string[] args)
         {
+            StatsManager statsManager;
+
             Console.SetWindowSize(80, 25);
             Console.BufferWidth = 80;
             Console.BufferHeight = 25;
@@ -36,7 +38,10 @@ namespace PIMonsterMash
 
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
-            SetupPIPoints(playerName, serverName);
+
+            statsManager = new StatsManager(playerName, serverName);
+
+            statsManager.IntializePlayerStats();
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
@@ -93,6 +98,10 @@ namespace PIMonsterMash
 
                     // Check if Monster isAlive
 
+                    // DO X, DO Y - Attack Monster
+                    // Roll Damage
+                    var attackRoll = DiceBag.RollD20();
+                    statsManager.UpdateAttackRollStat(attackRoll);
                     // Monster Turn
                     MonsterTurn();
 
@@ -133,33 +142,6 @@ namespace PIMonsterMash
                 Utils.AlignText(line, Utils.LineLocation.Center);
             }
             Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green);
-        }
-
-        static void SetupPIPoints(string playerName, string serverName)
-        {
-            // Setup PI Tags
-            var currentPISystem = PISystem.CreatePISystem(serverName, true);
-            var currentPIServer = PIServer.FindPIServer(currentPISystem, serverName);
-
-            // PlayerName - Assuming full name/Unique name
-            // Try to create if not exist
-            var points = PIPoint.FindPIPoints(currentPIServer, playerName + "*");            
-
-            if (points.Count() < 1)
-            {
-                IDictionary<string, object> intAttributeProperties = new Dictionary<string, object> {
-                    { PICommonPointAttributes.PointType, PIPointType.Int32 },
-                    { PICommonPointAttributes.Compressing, 0 },
-                    { PICommonPointAttributes.Shutdown, 0 }
-                };
-
-                IDictionary<string, IDictionary<string, object>> pointsAttributesTable = new Dictionary<string, IDictionary<string, object>>();
-                pointsAttributesTable.Add(playerName + "Score", intAttributeProperties);
-                pointsAttributesTable.Add(playerName + "Rolls", intAttributeProperties);
-                pointsAttributesTable.Add(playerName + "Turns", intAttributeProperties);
-
-                currentPIServer.CreatePIPoints(pointsAttributesTable);
-            }
         }
     }
 }
