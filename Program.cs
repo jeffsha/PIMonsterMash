@@ -23,7 +23,7 @@ namespace PIMonsterMash
 
             SoundPlayer soundDevice = new SoundPlayer();
             soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-            //soundDevice.PlayLooping();            
+            soundDevice.PlayLooping();
 
             // Setup Player Name
             Console.WriteLine("Please enter your player name:");
@@ -39,44 +39,87 @@ namespace PIMonsterMash
             SetupPIPoints(playerName, serverName);
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
-            var currentKey = new ConsoleKeyInfo();
+            ConsoleKeyInfo currentKey;
 
-            Console.WriteLine("Press H to attack, X to Leave the game!");
+            Console.WriteLine("Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!");
 
             // Generate Monster Factory
-            List<Monster> monsters = new List<Monster>();
-            monsters.Add(EntityFactory.Create<Monster>("Monster1"));
-
-            while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
+            int playerHealth = 1;
+            while (playerHealth > 0)
             {
-                foreach (Monster monster in monsters)
+                // Spawn Monster
+                // Monster Spawn - Factory?
+                soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
+                soundDevice.PlayLooping();
+
+                // Draw Monster
+
+                bool attackSuccess = false;
+                int damageToMonster = 0;
+                // Waiting for input
+                while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
                 {
-                    // While Monster isAlive
+                    switch (currentKey.Key)
+                    {
+                        // Roll Big Attack!
+                        case ConsoleKey.S:
+                            if (!attackSuccess && DiceBag.RollD20() > 16)
+                            {                             
+                                damageToMonster = DiceBag.RollD12();
+                            }
+                            break;
+                        // Roll Attack
+                        case ConsoleKey.A:
+                            if (!attackSuccess && DiceBag.RollD20() > 13)
+                            {                                
+                                damageToMonster = DiceBag.RollD8();
+                            }
+                            break;
+                        // Roll Fire Attack
+                        case ConsoleKey.F:
+                            if (!attackSuccess && DiceBag.RollD20() > 10)
+                            {                                
+                                damageToMonster = DiceBag.RollD20();
+                            }
+                            break;
+                        // Run away from monster ?
+                        case ConsoleKey.R:
+                            // Skip Monster
+                            break;
+                    }
 
-                    // DO X, DO Y - Attack Monster
-                    // Roll Damage
+                    // Damage to Monster
+                    DamageMonster(damageToMonster);
 
-                    // Monster Spawn - Factory?
-                    soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
-                    //soundDevice.PlayLooping();
+                    // Check if Monster isAlive
 
-                    // Updating UI
-                    // First Draw - ASCII Monster Art Monster Health Player Health
-                    // LOOPED
-                    // Attack of PLayer - Monster Health Updates Redraw
-                    // Action Text -> Player Does X Damage, Instructions hit x to do damage
-                    // Attack of Monster - Player Health Updates Redraw                
-                    // Action Text -> Monster Does X Damage
-                    Console.Clear();
-                    DrawUI(monster, player);
+                    // Monster Turn
+                    MonsterTurn();
 
-                    // Monster Attack Player
-                    // Reset
-
-                    // Calculate Monster Death
-                    // Calculate Player Death
+                    damageToMonster = 0;
                 }
+                playerHealth = 0;
             }
+        }
+
+        public static void DamageMonster(int damageToMonster)
+        {
+            Console.Clear();
+            DrawUI();
+
+            Console.Write("Player Dealt " + damageToMonster + " damage!");
+            Console.Write("Press Any Button To Continue");
+            Console.ReadKey();
+        }
+
+        public static void MonsterTurn()
+        {
+            int playerDamage = DiceBag.RollD8();
+
+            // Calculate Player LIfe
+
+            Console.Clear();
+            DrawUI();            
         }
 
         public static void DrawUI(Monster m, Player p)
