@@ -1,10 +1,7 @@
 using System;
+using System.Collections.Generic;
 
-namespace Entities {
+namespace PIMonsterMash.Entities {
     class Monster : Entity {
-        public override char[] Draw() {
-            Console.WriteLine("Rawr");
-            return null;
-        }
     }
 }
