@@ -60,6 +60,8 @@ namespace PIMonsterMash
 
                     // DO X, DO Y - Attack Monster
                     // Roll Damage
+                    var attackRoll = DiceBag.RollD20();
+                    statsManager.UpdateAttackRollStat(attackRoll);
 
                     // Monster Spawn - Factory?
                     soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";

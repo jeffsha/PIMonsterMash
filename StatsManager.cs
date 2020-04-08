@@ -29,35 +29,45 @@ namespace PIMonsterMash
         private string scoreTagName {
             get { return $"{playerName}-score"; }
         }
+        private PIPoint scoreTag;
 
         private string attackRollsTagName {
             get { return $"{playerName}-attack-rolls"; }
         }
+        private PIPoint attackRollsTag;
 
         private string damageRollsTagName {
             get { return $"{playerName}-damage-rolls"; }
         }
+        private PIPoint damageRollsTag;
 
         public void IntializePlayerStats()
         {
-            // PlayerName - Assuming full name/Unique name
-            // Try to create if not exist
-            var points = PIPoint.FindPIPoints(server, playerName + "*");
-
-            if (points.Count() < 1)
-            {
-                IDictionary<string, object> intAttributeProperties = new Dictionary<string, object> {
+            var intAttributeProperties = new Dictionary<string, object> {
                     { PICommonPointAttributes.PointType, PIPointType.Int32 },
                     { PICommonPointAttributes.Compressing, 0 },
                     { PICommonPointAttributes.Shutdown, 0 }
                 };
 
-                IDictionary<string, IDictionary<string, object>> pointsAttributesTable = new Dictionary<string, IDictionary<string, object>>();
-                pointsAttributesTable.Add(scoreTagName, intAttributeProperties);
-                pointsAttributesTable.Add(attackRollsTagName, intAttributeProperties);
-                pointsAttributesTable.Add(damageRollsTagName, intAttributeProperties);
+            // PlayerName - Assuming full name/Unique name
+            // Try to create if not exist
 
-                server.CreatePIPoints(pointsAttributesTable);
+            PIPoint.TryFindPIPoint(server, scoreTagName, out scoreTag);
+            if (scoreTag == null)
+            {
+                scoreTag = server.CreatePIPoint(scoreTagName, intAttributeProperties);
+            }
+
+            PIPoint.TryFindPIPoint(server, attackRollsTagName, out attackRollsTag);
+            if (attackRollsTag == null)
+            {
+                attackRollsTag = server.CreatePIPoint(attackRollsTagName, intAttributeProperties);
+            }
+
+            PIPoint.TryFindPIPoint(server, damageRollsTagName, out damageRollsTag);
+            if (damageRollsTag == null)
+            {
+                damageRollsTag = server.CreatePIPoint(damageRollsTagName, intAttributeProperties);
             }
         }
 
