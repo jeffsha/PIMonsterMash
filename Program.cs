@@ -8,7 +8,7 @@ using PIMonsterMash.Entities;
 namespace PIMonsterMash {
     class Program {
         const int startingHP = 25;
-        const string ATTACKINSTRUCTIONS = "Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!";
+        const string ATTACKINSTRUCTIONS = "Press A to Attack, S to Slash, F to Firebolt, R to Run, M to toggle Music, or X to eXit!";
 
         static Monster monster;
         static Player player;
@@ -91,6 +91,12 @@ namespace PIMonsterMash {
                             DrawUI();
                             MonsterAttemptsDamage();
                         }
+                        break;
+                    // Mute/unmute Music
+                    case ConsoleKey.M:
+                        MusicPlayer.ToggleMusic();
+                        messages.Add(ATTACKINSTRUCTIONS);
+                        DrawUI();
                         break;
                     // Bad Input
                     default:
