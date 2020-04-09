@@ -24,24 +24,34 @@ namespace PIMonsterMash.Entities {
 
         public int Damage(int amount) {
             Health -= amount;
-            Damaged(this);
+            Damaged(this, new EntityDamageEventArgs(amount));
             return Health;
         }
 
         public int Heal(int amount) {
             Health += amount;
-            Healed(this);
+            Healed(this, new EntityDamageEventArgs(amount));
             return Health;
         }
 
         public delegate void SpawnedHandler(Entity sender);
         public event SpawnedHandler Spawned;
 
-        public delegate void DamageHandler(Entity sender);
+        public delegate void DamageHandler(Entity sender, EntityDamageEventArgs e);
         public event DamageHandler Damaged;
 
-        public delegate void HealHandler(Entity sender);
+        public delegate void HealHandler(Entity sender, EntityDamageEventArgs e);
         public event HealHandler Healed;
 
     }
+
+    public class EntityDamageEventArgs : EventArgs {
+        public int Damage { get; set; }
+
+        public EntityDamageEventArgs(int damage)
+        {
+            Damage = damage;
+        }
+    }
+
 }
