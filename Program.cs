@@ -31,7 +31,7 @@ namespace PIMonsterMash {
             //Creates new player object and assigned event handlers
             SpawnPlayer();
 
-            Console.Write("Please enter your PI Server:");
+            Console.Write("Please enter your PI Server: ");
             var serverName = Console.ReadLine();
 
             Console.WriteLine("Loading Game, Please Wait...");
