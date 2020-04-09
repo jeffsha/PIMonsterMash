@@ -166,6 +166,8 @@ namespace PIMonsterMash {
                 messages.Add($"{entity.Name} has joined the battle");
             };
 
+            player.Damaged += (entity, e) => {};
+
             player.Spawn();
         }
 
