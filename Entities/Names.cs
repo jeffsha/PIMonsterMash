@@ -28,6 +28,11 @@ namespace PIMonsterMash.Entities {
             adjList.Add(5, "Brutal");
             adjList.Add(6, "Puny");
             adjList.Add(7, "Magical");
+            adjList.Add(8, "Retro");
+            adjList.Add(9, "Mythical");
+            adjList.Add(10, "Elusive");
+            adjList.Add(11, "Trendy");
+            adjList.Add(12, "Infectious");
         }
 
         public static string GetRandom() {
