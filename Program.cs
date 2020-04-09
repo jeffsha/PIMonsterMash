@@ -12,26 +12,26 @@ namespace PIMonsterMash
         static Monster monster;
         static Player player;
         static StatsManager statsManager;
-        static bool playerDied = false;
         static bool playerQuit;
 
         static void Main(string[] args)
         {
-            //Show splash screen
+            //TODO: Show splash screen - our current intro needs work, generate maui team ascii art
 
             //Required Console Dimensions
             InitializeConsole();
 
+            //Creates new player object and assigned event handlers
             SpawnPlayer();
 
-            //Console.Write("Please enter your PI Server:");
-            //var serverName = Console.ReadLine();
+            Console.Write("Please enter your PI Server:");
+            var serverName = Console.ReadLine();
 
             Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
 
-            //statsManager = new StatsManager(player.Name, serverName);
-            //statsManager.IntializePlayerStats();
+            statsManager = new StatsManager(player.Name, serverName);
+            statsManager.IntializePlayerStats();
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
@@ -41,10 +41,8 @@ namespace PIMonsterMash
             // Spawn first monster
             monster = SpawnMonster();
 
-            // playerQuit = Console.ReadKey().Equals(terminationKey);
-
             var damage = 0;
-            // Waiting for input
+
             while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
             {
                 switch (currentKey.Key)
@@ -70,7 +68,7 @@ namespace PIMonsterMash
                             damage = DiceBag.RollD20();
                         }
                         break;
-                    // Run away from monster ?
+                    // Run away from monster
                     case ConsoleKey.R:
                         //TODO: Print message about escaping successfully and
                         monster = SpawnMonster();
@@ -86,6 +84,7 @@ namespace PIMonsterMash
                 }
 
                 // Monster Turn
+                //TODO: Could add miss logic like above for player
                 player.Damage(DiceBag.RollD8());
 
                 damage = 0;
@@ -134,6 +133,7 @@ namespace PIMonsterMash
             monster.Damaged += (entity, e) => {
                 // If Monster is dead and player is alive, spawn new monster
                 if (entity.Health <= 0 && player.Health > 0) {
+                    //TODO: Metrics to record the # of monsters killed goes here
                     MusicPlayer.Stop();
                     monster = SpawnMonster();
 
