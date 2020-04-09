@@ -98,7 +98,7 @@ namespace PIMonsterMash {
                     // DO X, DO Y - Attack Monster
                     // Roll Damage
                     var attackRoll = DiceBag.RollD20();
-                    statsManager.UpdateAttackRollStat(attackRoll);
+                    //statsManager.UpdateAttackRollStat(attackRoll);
 
                     // Monster Turn
                     player.Damage(DiceBag.RollD8());
@@ -111,7 +111,7 @@ namespace PIMonsterMash {
         }
 
         public static Monster SpawnMonster(Player player) {
-            monster = EntityFactory.Create<Monster>("Monster1");
+            monster = EntityFactory.Create<Monster>();
 
             monster.Spawned += (entity) => {
                 MusicPlayer.Play(entity.MusicPath);
@@ -142,21 +142,16 @@ namespace PIMonsterMash {
         public static void DrawUI(Monster m, Player p, string action) {
             {
                 // clear screen, draw basic text ui	            // clear screen, draw basic text ui
-                Console.Clear(); Console.Clear();
-                Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center); Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
-                Utils.AlignText("Monster Name", Utils.LineLocation.Center, 50, 50, ConsoleColor.Red);
+                Console.Clear();
+                Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
+                Utils.AlignText(m.Name, Utils.LineLocation.Center, m.Health, 500000, ConsoleColor.Red);
                 foreach (string line in m.Art)              // TODO: Need also a max hp
-                    Utils.AlignText(m.Name, Utils.LineLocation.Center, m.Health, 50, ConsoleColor.Red);
+                    Utils.AlignText(line, Utils.LineLocation.Center, textColor: ConsoleColor.Red);
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine();
                 string spaces = new string(' ', 30);
-                foreach (string line in m.Art) {
-                    {
-                        Utils.AlignText(line, Utils.LineLocation.Center); Console.WriteLine(spaces + line);
-                    }
-                }
-                Utils.AlignText("Player Name", Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green); Utils.AlignText(p.Name, Utils.LineLocation.BottomRight, p.Health, playerMaxHP, ConsoleColor.Green);
+                Utils.AlignText(p.Name, Utils.LineLocation.BottomRight, 25, 25, ConsoleColor.Green);
                 Console.WriteLine();
                 Console.WriteLine(action);
                 // todo: prompt for hit roll?

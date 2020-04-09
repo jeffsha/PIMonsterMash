@@ -11,16 +11,17 @@ namespace PIMonsterMash
         public enum LineLocation
         {
             Center,
-            BottomRight
+            BottomRight,
         }
 
         public static void AlignText(string s, LineLocation lineLocation, int hpCurrent = -1, int hpMax = -1, ConsoleColor textColor = ConsoleColor.White)
         {
             Console.ForegroundColor = textColor;
-            Console.WriteLine();
             s = (hpCurrent != -1 && hpMax != -1) ? $"{s} HP: {hpCurrent}/{hpMax}" : s;
-
-            int cursorLeft = (Console.WindowWidth - s.Trim().Length);
+            if (hpCurrent != -1) {
+                Console.WriteLine();
+            }
+            int cursorLeft = (Console.WindowWidth - s.TrimEnd().Length);
             int cursorTop = 0;
             switch (lineLocation)
             {
