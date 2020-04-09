@@ -10,7 +10,7 @@ namespace PIMonsterMash.Entities {
             var entity = new T();
             var art = (entity.Art ?? Art.GetRandom());
             name = (name ?? Names.GetRandom());
-            health = (health < 0 ? new Random().Next(1000, 100000) : health);
+            health = (health < 0 ? new Random().Next(10, 50) : health);
             music = (music ?? MusicPlayer.GetRandom());
             entity.Init(name, health, art, music);
             return entity;
