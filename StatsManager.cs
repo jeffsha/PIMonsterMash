@@ -29,18 +29,21 @@ namespace PIMonsterMash
 
         private PIServer server;
 
+        private static readonly string scoreTagNamePrefix = "MonsterMash-score-";
         private string scoreTagName {
-            get { return $"MonsterMash-score-{playerName}"; }
+            get { return $"{scoreTagNamePrefix}{playerName}"; }
         }
         private PIPoint scoreTag;
 
+        private static readonly string attackRollsTagNamePrefix = "MonsterMash-attack-rolls-";
         private string attackRollsTagName {
-            get { return $"MonsterMash-attack-rolls-{playerName}"; }
+            get { return $"{attackRollsTagNamePrefix}{playerName}"; }
         }
         private PIPoint attackRollsTag;
 
+        private static readonly string damageRollsTagNamePrefix = "MonsterMash-attack-rolls-";
         private string damageRollsTagName {
-            get { return $"MonsterMash-damage-rolls-{playerName}"; }
+            get { return $"{damageRollsTagNamePrefix}{playerName}"; }
         }
         private PIPoint damageRollsTag;
 
@@ -58,18 +61,21 @@ namespace PIMonsterMash
             if (scoreTag == null)
             {
                 scoreTag = server.CreatePIPoint(scoreTagName, intAttributeProperties);
+                scoreTag.UpdateValue(new AFValue() { Value = 0 }, AFUpdateOption.InsertNoCompression);
             }
 
             PIPoint.TryFindPIPoint(server, attackRollsTagName, out attackRollsTag);
             if (attackRollsTag == null)
             {
                 attackRollsTag = server.CreatePIPoint(attackRollsTagName, intAttributeProperties);
+                attackRollsTag.UpdateValue(new AFValue() { Value = 0 }, AFUpdateOption.InsertNoCompression);
             }
 
             PIPoint.TryFindPIPoint(server, damageRollsTagName, out damageRollsTag);
             if (damageRollsTag == null)
             {
                 damageRollsTag = server.CreatePIPoint(damageRollsTagName, intAttributeProperties);
+                damageRollsTag.UpdateValue(new AFValue() { Value = 0 }, AFUpdateOption.InsertNoCompression);
             }
         }
 
@@ -77,19 +83,58 @@ namespace PIMonsterMash
         {
             monstersKilled++;
             var stat = PIPoint.FindPIPoint(server, scoreTagName);
-            stat.UpdateValue(new AFValue() { Value = monstersKilled, PIPoint = stat }, AFUpdateOption.InsertNoCompression);
+            stat.UpdateValue(new AFValue() { Value = monstersKilled }, AFUpdateOption.InsertNoCompression);
         }
 
         public void UpdateAttackRollStat(int attackRoll)
         {
             var stat = PIPoint.FindPIPoint(server, attackRollsTagName);
-            stat.UpdateValue(new AFValue() { Value = attackRoll, PIPoint = stat }, AFUpdateOption.InsertNoCompression);
+            stat.UpdateValue(new AFValue() { Value = attackRoll }, AFUpdateOption.InsertNoCompression);
         }
 
         public void UpdateDamageRollStat(int damageRoll)
         {
             var stat = PIPoint.FindPIPoint(server, damageRollsTagName);
-            stat.UpdateValue(new AFValue() { Value = damageRoll, PIPoint = stat }, AFUpdateOption.InsertNoCompression);
+            stat.UpdateValue(new AFValue() { Value = damageRoll }, AFUpdateOption.InsertNoCompression);
+        }
+
+        public Dictionary<string, int> GetScoreStats()
+        {
+            var stat = PIPoint.FindPIPoints(server, $"{scoreTagNamePrefix}*");
+
+            return stat.ToDictionary((point) =>
+            {
+                return point.Name.Replace(scoreTagNamePrefix, "");
+            }, (point) =>
+            {
+                return point.CurrentValue().ValueAsInt32();
+            });
+        }
+
+        public Dictionary<string, int> GetAttackRollStats()
+        {
+            var stat = PIPoint.FindPIPoints(server, $"{attackRollsTagNamePrefix}*");
+
+            return stat.ToDictionary((point) =>
+            {
+                return point.Name.Replace(attackRollsTagNamePrefix, "");
+            }, (point) =>
+            {
+                return point.CurrentValue().ValueAsInt32();
+            });
+        }
+
+        public Dictionary<string, int> GetDamageRollStats()
+        {
+            var stat = PIPoint.FindPIPoints(server, $"{damageRollsTagNamePrefix}*");
+
+            return stat.ToDictionary((point) =>
+            {
+                return point.Name.Replace(damageRollsTagNamePrefix, "");
+            }, (point) =>
+            {
+                return point.CurrentValue().ValueAsInt32();
+            });
         }
     }
 }

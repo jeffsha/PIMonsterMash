@@ -105,11 +105,8 @@ namespace PIMonsterMash {
             }
            
             Console.Clear();
-            Console.WriteLine("GAME OVER");
-            Console.WriteLine("Press any key to continue.");            
-            Console.ReadKey();
-
-            // TODO: Display Updated Scoreboard
+            
+            DisplayScoreboard(statsManager);
         }
 
         private static void MonsterAttemptsDamage()
@@ -132,7 +129,6 @@ namespace PIMonsterMash {
             messages.Add(ATTACKINSTRUCTIONS);
 
             DrawUI();
-
         }
 
         private static void AttackMissed(string typeOfAttack, int diceRoll)
@@ -149,7 +145,8 @@ namespace PIMonsterMash {
             messages.Add($"{player.Name} rolled: {diceRoll}");
             messages.Add($"Attack Success!! {player.Name} Dealt {monster.Name} {damage} damage");
             DrawUI();
-            // statsManager.UpdateDamageRollStat(damage);
+            statsManager.UpdateAttackRollStat(diceRoll);
+            statsManager.UpdateDamageRollStat(damage);
         }
 
         private static void InitializeGame()
@@ -191,11 +188,9 @@ namespace PIMonsterMash {
             monster.Damaged += (entity, e) => {
                 // If Monster is dead, spawn new monster
                 if (entity.Health <= 0 ) {
-                    statsManager.UpdateScoreStat();                    
+                    statsManager.UpdateScoreStat();
                     MusicPlayer.Stop();
                     monster = SpawnMonster();
-
-                    //If monster and player are still alive, update ui
                 }
             };
 
@@ -206,7 +201,7 @@ namespace PIMonsterMash {
 
         public static void DrawUI() {
             {
-                // clear screen, draw basic text ui	            
+                // clear screen, draw basic text ui
                 Console.Clear();
                 Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
                 Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, monster.MaxHealth, textColor: ConsoleColor.Red);
@@ -229,6 +224,63 @@ namespace PIMonsterMash {
                 // todo: prompt for hit roll?
                 // todo: prompt for damage roll?
             }
+        }
+
+        private static void DisplayScoreboard(StatsManager statsManager)
+        {
+            var latestScores = statsManager.GetScoreStats();
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(
+@"
+  ▄████  ▄▄▄       ███▄ ▄███▓▓█████     ▒█████   ██▒   █▓▓█████  ██▀███  
+ ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀    ▒██▒  ██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒
+▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███      ▒██░  ██▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒
+░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄    ▒██   ██░  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄  
+░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒   ░ ████▓▒░   ▒▀█░  ░▒████▒░██▓ ▒██▒
+ ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░   ░ ▒░▒░▒░    ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░
+  ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░     ░ ▒ ▒░    ░ ░░   ░ ░  ░  ░▒ ░ ▒░
+░ ░   ░   ░   ▒   ░      ░      ░      ░ ░ ░ ▒       ░░     ░     ░░   ░ 
+      ░       ░  ░       ░      ░  ░       ░ ░        ░     ░  ░   ░     
+                                                     ░                   
+"
+            );
+            Console.ResetColor();
+
+            Console.WriteLine();
+            Console.WriteLine("Presseth a key to seeeth thy scores.");
+            Console.ReadKey();
+
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(
+@"
+███████╗ ██████╗ ██████╗ ██████╗ ███████╗███████╗
+██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝
+███████╗██║     ██║   ██║██████╔╝█████╗  ███████╗
+╚════██║██║     ██║   ██║██╔══██╗██╔══╝  ╚════██║
+███████║╚██████╗╚██████╔╝██║  ██║███████╗███████║
+╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
+"
+            );
+            Console.ResetColor();
+
+            var scoresList = latestScores.ToList().OrderByDescending(score => score.Value);
+            Console.WriteLine($"Vegeta : Over 9000");
+            Console.WriteLine($"Ghandi : 1337");
+            foreach (var score in scoresList)
+            {
+                Console.WriteLine($"{score.Key} : {score.Value}");
+            }
+            Console.WriteLine($"Barb : -10");
+
+            Console.WriteLine();
+            Console.WriteLine("All your base are belong to us.");
+
+            Console.WriteLine();
+            Console.WriteLine("Presseth a key to leave thy scores.");
+            Console.ReadKey();
         }
     }
 }
