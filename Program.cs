@@ -39,7 +39,7 @@ namespace PIMonsterMash
             Console.WriteLine("Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!");
 
             // Spawn first monster
-            monster = SpawnMonster(player);
+            monster = SpawnMonster();
 
             // playerQuit = Console.ReadKey().Equals(terminationKey);
 
@@ -72,14 +72,23 @@ namespace PIMonsterMash
                         break;
                     // Run away from monster ?
                     case ConsoleKey.R:
-                        // Skip Monster
+                        //TODO: Print message about escaping successfully and
+                        monster = SpawnMonster();
                         break;
                 }
 
-                monster.Damage(damage);
+                if (damage > 0)
+                {
+                    monster.Damage(damage);
+                } else
+                {
+                    //TODO: Print missed attack message
+                }
 
                 // Monster Turn
                 player.Damage(DiceBag.RollD8());
+
+                damage = 0;
             }
         }
 
@@ -98,29 +107,36 @@ namespace PIMonsterMash
 
             player.Spawned += (sender) =>
             {
-
+                //TODO: Can play intro music? 
+                //TODO: Can display "blah blah adventurer joins the battle..." 
             };
 
             player.Damaged += (sender, e) =>
             {
-
+                if (sender.Health <= 0  && monster.Health > 0)
+                {
+                    //TODO: Game over message
+                }
             };
 
             player.Spawn();
         }
 
-        public static Monster SpawnMonster(Player player) {
+        public static Monster SpawnMonster() {
             monster = EntityFactory.Create<Monster>("Monster1");
 
             monster.Spawned += (entity) => {
                 MusicPlayer.Play(entity.MusicPath);
+
+                //TODO: Can display "blah blah monster appears..." 
             };
 
             monster.Damaged += (entity, e) => {
                 // If Monster is dead and player is alive, spawn new monster
                 if (entity.Health <= 0 && player.Health > 0) {
                     MusicPlayer.Stop();
-                    monster = SpawnMonster(player);
+                    monster = SpawnMonster();
+
                     //If monster and player are still alive, update ui
                 } else if (entity.Health > 0 && player.Health > 0)
                 {
