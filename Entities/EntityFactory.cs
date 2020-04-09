@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace PIMonsterMash.Entities {
     static class EntityFactory {
-        public static T Create<T>(string name, int health = -1, string musicPath = null) where T : Entity, new() {
+        public static T Create<T>(string name = null, int health = -1, string music = null) where T : Entity, new() {
             var entity = new T();
-            var pHealth = (health < 0 ? new Random().Next(10, 50) : health);
-            var pArt = (entity.Art ?? Art.GetRandom());
-            var pMusic = (musicPath ?? MusicPlayer.GetRandom());
-            entity.Init(name, pHealth, pArt, pMusic);
+            var art = (entity.Art ?? Art.GetRandom());
+            name = (name ?? Names.GetRandom());
+            health = (health < 0 ? new Random().Next(10, 50) : health);
+            music = (music ?? MusicPlayer.GetRandom());
+            entity.Init(name, health, art, music);
             return entity;
         }
     }

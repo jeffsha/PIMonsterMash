@@ -5,14 +5,15 @@ using OSIsoft.AF;
 using OSIsoft.AF.PI;
 using PIMonsterMash.Entities;
 
-namespace PIMonsterMash
-{
+namespace PIMonsterMash {
     class Program {
-        const int playerMaxHP = 250;
+        const int startingHP = 25;
+        const string ATTACKINSTRUCTIONS = "Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!";
+
         static Monster monster;
         static Player player;
         static StatsManager statsManager;
-        const string ATTACKINSTRUCTIONS = "Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!";
+        static List<string> messages = new List<string>();
 
         // TODO:
         // Opening Maui Splash Screen
@@ -33,7 +34,6 @@ namespace PIMonsterMash
             Console.Write("Please enter your PI Server:");
             var serverName = Console.ReadLine();
 
-            Console.Clear();
             Console.WriteLine("Loading Game, Please Wait...");
 
             statsManager = new StatsManager(player.Name, serverName);
@@ -41,12 +41,14 @@ namespace PIMonsterMash
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
-            
-            Console.WriteLine(ATTACKINSTRUCTIONS);
+
 
             // Spawn first monster
             monster = SpawnMonster();
-            
+
+            messages.Add(ATTACKINSTRUCTIONS);
+            DrawUI();
+
             var diceRoll = 0;
 
             while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
@@ -79,20 +81,22 @@ namespace PIMonsterMash
                         break;
                     // Run away from monster
                     case ConsoleKey.R:
-                        if ((diceRoll = DiceBag.RollD20()) > 7)
-                        {
-                            DrawUI(monster, player, "Successfully Fled!");
-                            Console.WriteLine("Press any button to Continue.");
-                            Console.ReadKey();
-                            monster = SpawnMonster();                            
+                        if ((diceRoll = DiceBag.RollD20()) > 7) {
+                            messages.Add($"{player.Name} successfully runs away from {monster.Name}");
+                            messages.Add(ATTACKINSTRUCTIONS);
+                            monster = SpawnMonster();
                         }
-                        else                        
-                            DrawUI(monster, player, "Failed Running from the monster!!");
+                        else {
+                            messages.Add($"Failed Running from the {monster.Name}!!");
+                            DrawUI();
                             MonsterAttemptsDamage();
+                        }
                         break;
                     // Bad Input
                     default:
-                        DrawUI(monster, player, "Invalid Command, Try Again!");
+                        messages.Add("Invalid Command, Try Again!");
+                        messages.Add(ATTACKINSTRUCTIONS);
+                        DrawUI();
                         break;
                 }
 
@@ -114,27 +118,38 @@ namespace PIMonsterMash
             Console.ReadKey();
 
             int diceRoll;
-            if ((diceRoll = DiceBag.RollD20()) > 12)
-            {
+            if ((diceRoll = DiceBag.RollD20()) > 12) {
                 var damage = DiceBag.RollD20();
                 player.Damage(damage);
-                DrawUI(monster, player, monster.Name + " rolled: " + diceRoll + " Attack Success!! Dealt " + player.Name + " " + damage + " damage");
-            } else
-                DrawUI(monster, player, monster.Name + " rolled: " + diceRoll + " Attack Missed. :(");
+                messages.Add($"{monster.Name} rolled: {diceRoll}");
+                messages.Add($"Attack Success!! {monster.Name} Dealt {player.Name} {damage} damage");
+            }
+            else {
+                messages.Add($"{monster.Name} rolled: {diceRoll}");
+                messages.Add("Attack Missed. :(");
+            }
+
+            messages.Add(ATTACKINSTRUCTIONS);
+
+            DrawUI();
 
         }
 
         private static void AttackMissed(string typeOfAttack, int diceRoll)
         {
-            DrawUI(monster, player, player.Name + " rolled: " + diceRoll + " Attack Missed. :(");
+            messages.Add($"{player.Name} rolled: {diceRoll}");
+            messages.Add("Attack Missed. :(");
+            DrawUI();
         }
 
         private static void PlayerDealsDamage(int damage, int diceRoll)
         {
             damage = DiceBag.RollD12();
             monster.Damage(damage);
-            DrawUI(monster, player, player.Name + " rolled: " + diceRoll + " Attack Success!! Dealt the monster " + damage + " damage");
-            statsManager.UpdateDamageRollStat(damage);
+            messages.Add($"{player.Name} rolled: {diceRoll}");
+            messages.Add($"Attack Success!! {player.Name} Dealt {monster.Name} {damage} damage");
+            DrawUI();
+            // statsManager.UpdateDamageRollStat(damage);
         }
 
         private static void InitializeGame()
@@ -142,30 +157,21 @@ namespace PIMonsterMash
             Console.SetWindowSize(120, 35);
             Console.BufferWidth = 120;
             Console.BufferHeight = 35;
-
-            //TODO: Show splash screen - our current intro needs work, generate maui team ascii art
-
-            MusicPlayer.Play(AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav");
         }
 
         #region Spawn Entities
-        private static void SpawnPlayer()
-        {
+        private static void SpawnPlayer() {
             Console.Write("Please enter your player name: ");
-            player = EntityFactory.Create<Player>(Console.ReadLine(), playerMaxHP);
+            player = EntityFactory.Create<Player>(Console.ReadLine(), startingHP);
 
-            // Don't think we need
-            player.Spawned += (sender) =>
-            {
+            player.Spawned += (entity) => {
+                messages.Add($"{entity.Name} has joined the battle");
                 //TODO: Can play intro music? 
                 //TODO: Can display "blah blah adventurer joins the battle..." 
             };
 
-            // Don't think we need
-            player.Damaged += (sender, e) =>
-            {
-                if (sender.Health <= 0)
-                {
+            player.Damaged += (entity, e) => {
+                if (entity.Health <= 0 && monster.Health > 0) {
                     //TODO: Game over message
                 }
             };
@@ -174,13 +180,12 @@ namespace PIMonsterMash
         }
 
         public static Monster SpawnMonster() {
-            // TODO: Need Monster Names
-            monster = EntityFactory.Create<Monster>("Monster1");
+            monster = EntityFactory.Create<Monster>();
 
             monster.Spawned += (entity) => {
                 MusicPlayer.Play(entity.MusicPath);
-
-                DrawUI(monster, player, "Monster appears!");
+                messages.Add($"{entity.Name} has joined the battle");
+                DrawUI();
             };
 
             monster.Damaged += (entity, e) => {
@@ -189,6 +194,8 @@ namespace PIMonsterMash
                     statsManager.UpdateScoreStat();                    
                     MusicPlayer.Stop();
                     monster = SpawnMonster();
+
+                    //If monster and player are still alive, update ui
                 }
             };
 
@@ -197,12 +204,12 @@ namespace PIMonsterMash
         }
         #endregion  
 
-        public static void DrawUI(Monster monster, Player player, string action) {
+        public static void DrawUI() {
             {
                 // clear screen, draw basic text ui	            
-                Console.Clear(); 
+                Console.Clear();
                 Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
-                Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, ConsoleColor.Red);
+                Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, monster.MaxHealth, textColor: ConsoleColor.Red);
 
                 Console.WriteLine();
                 Console.WriteLine();
@@ -213,12 +220,15 @@ namespace PIMonsterMash
                         Console.WriteLine(spaces + line);
                     }
                 }
-                Utils.AlignText(player.Name, Utils.LineLocation.BottomRight, player.Health, ConsoleColor.Green);
+                Utils.AlignText(player.Name, Utils.LineLocation.BottomRight, player.Health, player.MaxHealth, messages.Count, ConsoleColor.Green);
                 Console.WriteLine();
-                Console.WriteLine(action);
-                Console.WriteLine();
-                Console.WriteLine(ATTACKINSTRUCTIONS);
+                foreach (string message in messages) {
+                    Console.WriteLine(message);
+                }
+                messages.Clear();
+                // todo: prompt for hit roll?
+                // todo: prompt for damage roll?
             }
-        }        
+        }
     }
 }

@@ -34,7 +34,6 @@ namespace PIMonsterMash {
             wizard.Add("            \\ \\())(-)(()/ /");
             wizard.Add("             ' \\(((()))/ '");
             wizard.Add("            / ' \\)).))/ ' \\");
-            wizard.Add("           / _ \\ - | - /_  \\");
             wizard.Add("         (   ( .;''';. .'  )");
             wizard.Add("          _\\\"__ /    )\\ __\" / _");
             wizard.Add("            \\/  \\   ' /  \\/");

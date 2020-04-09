@@ -5,6 +5,7 @@ namespace PIMonsterMash.Entities {
 
     abstract class Entity {
         public int Health { get; private set; }
+        public int MaxHealth { get; private set; }
         public string Name { get; private set; }
 
         public string MusicPath { get; private set; }
@@ -14,6 +15,7 @@ namespace PIMonsterMash.Entities {
         public void Init(string name, int health, List<string> art, string musicPath) {
             Name = name;
             Health = health;
+            MaxHealth = health;
             Art = art;
             MusicPath = musicPath;
         }
