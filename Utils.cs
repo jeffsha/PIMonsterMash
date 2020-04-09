@@ -14,7 +14,7 @@ namespace PIMonsterMash
             BottomRight,
         }
 
-        public static void AlignText(string s, LineLocation lineLocation, int hpCurrent = -1, int hpMax = -1, ConsoleColor textColor = ConsoleColor.White)
+        public static void AlignText(string s, LineLocation lineLocation, int hpCurrent = -1, int hpMax = -1, int buffer = 0, ConsoleColor textColor = ConsoleColor.White)
         {
             Console.ForegroundColor = textColor;
             s = (hpCurrent != -1 && hpMax != -1) ? $"{s} HP: {hpCurrent}/{hpMax}" : s;
@@ -26,7 +26,7 @@ namespace PIMonsterMash
             switch (lineLocation)
             {
                 case LineLocation.BottomRight:
-                    cursorTop = Console.BufferHeight - 5;
+                    cursorTop = Console.BufferHeight - buffer - 5;
                     break;
                 case LineLocation.Center:
                     cursorLeft /= 2;
