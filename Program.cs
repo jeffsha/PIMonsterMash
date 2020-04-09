@@ -8,18 +8,24 @@ using PIMonsterMash.Entities;
 namespace PIMonsterMash
 {
     class Program {
-        const int playerMaxHP = 25000;
+        const int playerMaxHP = 250;
         static Monster monster;
         static Player player;
         static StatsManager statsManager;
-        static bool playerQuit;
+        const string ATTACKINSTRUCTIONS = "Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!";
+
+        // TODO:
+        // Opening Maui Splash Screen
+        // Monster Names
+        // AC for monsters (optional)?
+        // More Monsters
+        // More Music For Different Monsters
+        // Score board - Number of Monsters Killed - Most Damage Dealt
 
         static void Main(string[] args)
         {
-            //TODO: Show splash screen - our current intro needs work, generate maui team ascii art
-
-            //Required Console Dimensions
-            InitializeConsole();
+            //Required Game Initialization
+            InitializeGame();
 
             //Creates new player object and assigned event handlers
             SpawnPlayer();
@@ -35,67 +41,111 @@ namespace PIMonsterMash
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
-
-            Console.WriteLine("Press A to attack, Press S to Slash, Press F to Firebolt, Press R to Run, X to Leave the game!");
+            
+            Console.WriteLine(ATTACKINSTRUCTIONS);
 
             // Spawn first monster
             monster = SpawnMonster();
-
-            var damage = 0;
+            
+            var diceRoll = 0;
 
             while (!(currentKey = Console.ReadKey()).Equals(terminationKey))
             {
                 switch (currentKey.Key)
                 {
-                    // Roll Big Attack!
-                    case ConsoleKey.S:
-                        if (DiceBag.RollD20() > 16)
-                        {
-                            damage = DiceBag.RollD12();
-                        }
-                        break;
-                    // Roll Attack
-                    case ConsoleKey.A:
-                        if (DiceBag.RollD20() > 13)
-                        {
-                            damage = DiceBag.RollD8();
-                        }
-                        break;
-                    // Roll Fire Attack
+                    // Roll FireBolt!!
                     case ConsoleKey.F:
-                        if (DiceBag.RollD20() > 10)
-                        {
-                            damage = DiceBag.RollD20();
-                        }
+                        if ((diceRoll = DiceBag.RollD20()) >= 14)                        
+                            PlayerDealsDamage(DiceBag.RollD20(), diceRoll);                                                    
+                        else                        
+                            AttackMissed("Firebolt", diceRoll);
+                        MonsterAttemptsDamage();
+                        break;
+                    // Roll Slash Attack
+                    case ConsoleKey.S:
+                        if ((diceRoll = DiceBag.RollD20()) >= 10)                        
+                            PlayerDealsDamage(DiceBag.RollD12(), diceRoll);                        
+                        else
+                            AttackMissed("Slash Attack", diceRoll);
+                        MonsterAttemptsDamage();
+                        break;
+                    // Roll Basic Attack
+                    case ConsoleKey.A:
+                        if ((diceRoll = DiceBag.RollD20()) >= 6)                        
+                            PlayerDealsDamage(DiceBag.RollD8(), diceRoll);                        
+                        else
+                            AttackMissed("Basic Attack", diceRoll);
+                        MonsterAttemptsDamage();
                         break;
                     // Run away from monster
                     case ConsoleKey.R:
-                        //TODO: Print message about escaping successfully and
-                        monster = SpawnMonster();
+                        if ((diceRoll = DiceBag.RollD20()) > 7)
+                        {
+                            DrawUI(monster, player, "Successfully Fled!");
+                            Console.WriteLine("Press any button to Continue.");
+                            Console.ReadKey();
+                            monster = SpawnMonster();                            
+                        }
+                        else                        
+                            DrawUI(monster, player, "Failed Running from the monster!!");
+                            MonsterAttemptsDamage();
+                        break;
+                    // Bad Input
+                    default:
+                        DrawUI(monster, player, "Invalid Command, Try Again!");
                         break;
                 }
 
-                if (damage > 0)
-                {
-                    monster.Damage(damage);
-                } else
-                {
-                    //TODO: Print missed attack message
-                }
-
-                // Monster Turn
-                //TODO: Could add miss logic like above for player
-                player.Damage(DiceBag.RollD8());
-
-                damage = 0;
+                if (player.Health <= 0)
+                    break;
             }
+           
+            Console.Clear();
+            Console.WriteLine("GAME OVER");
+            Console.WriteLine("Press any key to continue.");            
+            Console.ReadKey();
+
+            // TODO: Display Updated Scoreboard
         }
 
-        private static void InitializeConsole()
+        private static void MonsterAttemptsDamage()
+        {
+            Console.WriteLine("The Monster is attacking! Press any button to Continue.");
+            Console.ReadKey();
+
+            int diceRoll;
+            if ((diceRoll = DiceBag.RollD20()) > 12)
+            {
+                var damage = DiceBag.RollD20();
+                player.Damage(damage);
+                DrawUI(monster, player, monster.Name + " rolled: " + diceRoll + " Attack Success!! Dealt " + player.Name + " " + damage + " damage");
+            } else
+                DrawUI(monster, player, monster.Name + " rolled: " + diceRoll + " Attack Missed. :(");
+
+        }
+
+        private static void AttackMissed(string typeOfAttack, int diceRoll)
+        {
+            DrawUI(monster, player, player.Name + " rolled: " + diceRoll + " Attack Missed. :(");
+        }
+
+        private static void PlayerDealsDamage(int damage, int diceRoll)
+        {
+            damage = DiceBag.RollD12();
+            monster.Damage(damage);
+            DrawUI(monster, player, player.Name + " rolled: " + diceRoll + " Attack Success!! Dealt the monster " + damage + " damage");
+            statsManager.UpdateDamageRollStat(damage);
+        }
+
+        private static void InitializeGame()
         {
             Console.SetWindowSize(120, 35);
             Console.BufferWidth = 120;
             Console.BufferHeight = 35;
+
+            //TODO: Show splash screen - our current intro needs work, generate maui team ascii art
+
+            MusicPlayer.Play(AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav");
         }
 
         #region Spawn Entities
@@ -104,15 +154,17 @@ namespace PIMonsterMash
             Console.Write("Please enter your player name: ");
             player = EntityFactory.Create<Player>(Console.ReadLine(), playerMaxHP);
 
+            // Don't think we need
             player.Spawned += (sender) =>
             {
                 //TODO: Can play intro music? 
                 //TODO: Can display "blah blah adventurer joins the battle..." 
             };
 
+            // Don't think we need
             player.Damaged += (sender, e) =>
             {
-                if (sender.Health <= 0  && monster.Health > 0)
+                if (sender.Health <= 0)
                 {
                     //TODO: Game over message
                 }
@@ -122,25 +174,21 @@ namespace PIMonsterMash
         }
 
         public static Monster SpawnMonster() {
+            // TODO: Need Monster Names
             monster = EntityFactory.Create<Monster>("Monster1");
 
             monster.Spawned += (entity) => {
                 MusicPlayer.Play(entity.MusicPath);
 
-                //TODO: Can display "blah blah monster appears..." 
+                DrawUI(monster, player, "Monster appears!");
             };
 
             monster.Damaged += (entity, e) => {
-                // If Monster is dead and player is alive, spawn new monster
-                if (entity.Health <= 0 && player.Health > 0) {
-                    //TODO: Metrics to record the # of monsters killed goes here
+                // If Monster is dead, spawn new monster
+                if (entity.Health <= 0 ) {
+                    statsManager.UpdateScoreStat();                    
                     MusicPlayer.Stop();
                     monster = SpawnMonster();
-
-                    //If monster and player are still alive, update ui
-                } else if (entity.Health > 0 && player.Health > 0)
-                {
-                    DamageMonster(e.Damage, (Monster)entity, player);
                 }
             };
 
@@ -149,21 +197,12 @@ namespace PIMonsterMash
         }
         #endregion  
 
-        public static void DamageMonster(int damageToMonster, Monster currentMonster, Player currentPlayer) {
-            Console.Clear();
-            DrawUI(currentMonster, currentPlayer, "The Monster attacks! Press H to attack again.");
-
-            Console.Write("Player Dealt " + damageToMonster + " damage!");
-            Console.Write("Press Any Button To Continue");
-            Console.ReadKey();
-        }
-
         public static void DrawUI(Monster monster, Player player, string action) {
             {
                 // clear screen, draw basic text ui	            
                 Console.Clear(); 
                 Utils.AlignText("Welcome to The PI Monster Mash!!!", Utils.LineLocation.Center);
-                Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, 50, ConsoleColor.Red);
+                Utils.AlignText(monster.Name, Utils.LineLocation.Center, monster.Health, ConsoleColor.Red);
 
                 Console.WriteLine();
                 Console.WriteLine();
@@ -174,37 +213,12 @@ namespace PIMonsterMash
                         Console.WriteLine(spaces + line);
                     }
                 }
-                Utils.AlignText(player.Name, Utils.LineLocation.BottomRight, player.Health, playerMaxHP, ConsoleColor.Green);
+                Utils.AlignText(player.Name, Utils.LineLocation.BottomRight, player.Health, ConsoleColor.Green);
                 Console.WriteLine();
                 Console.WriteLine(action);
-                // todo: prompt for hit roll?
-                // todo: prompt for damage roll?
+                Console.WriteLine();
+                Console.WriteLine(ATTACKINSTRUCTIONS);
             }
-        }
-
-        static void SetupPIPoints(string playerName, string serverName) {
-            // Setup PI Tags
-            var currentPISystem = PISystem.CreatePISystem(serverName, true);
-            var currentPIServer = PIServer.FindPIServer(currentPISystem, serverName);
-
-            // PlayerName - Assuming full name/Unique name
-            // Try to create if not exist
-            var points = PIPoint.FindPIPoints(currentPIServer, playerName + "*");
-
-            if (points.Count() < 1) {
-                IDictionary<string, object> intAttributeProperties = new Dictionary<string, object> {
-                    { PICommonPointAttributes.PointType, PIPointType.Int32 },
-                    { PICommonPointAttributes.Compressing, 0 },
-                    { PICommonPointAttributes.Shutdown, 0 }
-                };
-
-                IDictionary<string, IDictionary<string, object>> pointsAttributesTable = new Dictionary<string, IDictionary<string, object>>();
-                pointsAttributesTable.Add(playerName + "Score", intAttributeProperties);
-                pointsAttributesTable.Add(playerName + "Rolls", intAttributeProperties);
-                pointsAttributesTable.Add(playerName + "Turns", intAttributeProperties);
-
-                currentPIServer.CreatePIPoints(pointsAttributesTable);
-            }
-        }
+        }        
     }
 }

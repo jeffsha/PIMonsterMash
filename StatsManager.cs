@@ -12,9 +12,12 @@ namespace PIMonsterMash
 {
     class StatsManager
     {
+        int monstersKilled = 0;
+
         public StatsManager(string playerName, string serverName)
         {
             this.playerName = playerName;
+            monstersKilled = 0;
 
             var currentPISystem = PISystem.CreatePISystem(serverName, true);
             server = PIServer.FindPIServer(currentPISystem, serverName);
@@ -27,17 +30,17 @@ namespace PIMonsterMash
         private PIServer server;
 
         private string scoreTagName {
-            get { return $"{playerName}-score"; }
+            get { return $"MonsterMash-score-{playerName}"; }
         }
         private PIPoint scoreTag;
 
         private string attackRollsTagName {
-            get { return $"{playerName}-attack-rolls"; }
+            get { return $"MonsterMash-attack-rolls-{playerName}"; }
         }
         private PIPoint attackRollsTag;
 
         private string damageRollsTagName {
-            get { return $"{playerName}-damage-rolls"; }
+            get { return $"MonsterMash-damage-rolls-{playerName}"; }
         }
         private PIPoint damageRollsTag;
 
@@ -49,9 +52,8 @@ namespace PIMonsterMash
                     { PICommonPointAttributes.Shutdown, 0 }
                 };
 
-            // PlayerName - Assuming full name/Unique name
-            // Try to create if not exist
-
+            // PlayerName - Assuming full name/Unique name            
+            // Try to create if doesn't exist
             PIPoint.TryFindPIPoint(server, scoreTagName, out scoreTag);
             if (scoreTag == null)
             {
@@ -71,10 +73,11 @@ namespace PIMonsterMash
             }
         }
 
-        public void UpdateScoreStat(int score)
+        public void UpdateScoreStat()
         {
+            monstersKilled++;
             var stat = PIPoint.FindPIPoint(server, scoreTagName);
-            stat.UpdateValue(new AFValue() { Value = score, PIPoint = stat }, AFUpdateOption.InsertNoCompression);
+            stat.UpdateValue(new AFValue() { Value = monstersKilled, PIPoint = stat }, AFUpdateOption.InsertNoCompression);
         }
 
         public void UpdateAttackRollStat(int attackRoll)
