@@ -31,13 +31,13 @@ namespace PIMonsterMash {
             //Creates new player object and assigned event handlers
             SpawnPlayer();
 
-            //Console.Write("Please enter your PI Server:");
-            //var serverName = Console.ReadLine();
+            Console.Write("Please enter your PI Server:");
+            var serverName = Console.ReadLine();
 
             Console.WriteLine("Loading Game, Please Wait...");
 
-            // statsManager = new StatsManager(player.Name, serverName);
-            // statsManager.IntializePlayerStats();
+            statsManager = new StatsManager(player.Name, serverName);
+            statsManager.IntializePlayerStats();
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
@@ -191,7 +191,7 @@ namespace PIMonsterMash {
             monster.Damaged += (entity, e) => {
                 // If Monster is dead, spawn new monster
                 if (entity.Health <= 0 ) {
-                    // statsManager.UpdateScoreStat();                    
+                    statsManager.UpdateScoreStat();                    
                     MusicPlayer.Stop();
                     monster = SpawnMonster();
 
