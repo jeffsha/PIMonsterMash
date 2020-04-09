@@ -26,47 +26,124 @@ namespace PIMonsterMash
             @"                              \/              \/      \/             \/                    \/      \/      \/      \/      \/ \/",
         };
 
-        static Art()
-        {
-            var goblin = new List<string>();
-            goblin.Add("             ,      ,");
-            goblin.Add("            /(.-\"\"-.)\\");
-            goblin.Add("        |\\  \\/      \\/  /|");
-            goblin.Add("        | \\ / =.  .= \\ / |");
-            goblin.Add("        \\( \\   o\\/o   / )/");
-            goblin.Add("         \\_, '-/  \\-' ,_/ ");
-            goblin.Add("           /   \\__/   \\");
-            goblin.Add("           \\ \\__/\\__/ /");
-            goblin.Add("         ___\\ \\|--|/ /___");
-            goblin.Add("       /`    \\      /    `\\");
-            goblin.Add("      /       '----'       \\");
+        static Art() {
+            var monsters = new List<string>();
+            monsters.Add("             ,      ,");
+            monsters.Add("            /(.-\"\"-.)\\");
+            monsters.Add("        |\\  \\/      \\/  /|");
+            monsters.Add("        | \\ / =.  .= \\ / |");
+            monsters.Add("        \\( \\   o\\/o   / )/");
+            monsters.Add("         \\_, '-/  \\-' ,_/ ");
+            monsters.Add("           /   \\__/   \\");
+            monsters.Add("           \\ \\__/\\__/ /");
+            monsters.Add("         ___\\ \\|--|/ /___");
+            monsters.Add("       /`    \\      /    `\\");
+            monsters.Add("      /       '----'       \\");
 
-            artList.Add(0, goblin);
+            artList.Add(0, monsters.ToList());
+            monsters.Clear();
 
-            var wizard = new List<string>();
-            wizard.Add("                    ____");
-            wizard.Add("                  .'* *.'");
-            wizard.Add("               __/_*_*(_");
-            wizard.Add("              / _______ \\");
-            wizard.Add("             _\\_)/___\\(_/_");
-            wizard.Add("            / _((\\- -/))_ \\");
-            wizard.Add("            \\ \\())(-)(()/ /");
-            wizard.Add("             ' \\(((()))/ '");
-            wizard.Add("            / ' \\)).))/ ' \\");
-            wizard.Add("         (   ( .;''';. .'  )");
-            wizard.Add("          _\\\"__ /    )\\ __\" / _");
-            wizard.Add("            \\/  \\   ' /  \\/");
-            wizard.Add("             .'  '...' ' )");
-            wizard.Add("              / /  |  \\ \\");
-            wizard.Add("             / .   .   . \\");
-            wizard.Add("            /   .     .   \\");
-            wizard.Add("           /   /   |   \\   \\");
-            wizard.Add("         .'   /    b    '.  '.");
-            wizard.Add("     _.-'    /     Bb     '-. '-._");
-            wizard.Add(" _.-'       |      BBb       '-.  '-.");
-            wizard.Add("(________mrf\\____.dBBBb.________)____)");
+            monsters.Add("                    ____");
+            monsters.Add("                  .'* *.'");
+            monsters.Add("               __/_*_*(_");
+            monsters.Add("              / _______ \\");
+            monsters.Add("             _\\_)/___\\(_/_");
+            monsters.Add("            / _((\\- -/))_ \\");
+            monsters.Add("            \\ \\())(-)(()/ /");
+            monsters.Add("             ' \\(((()))/ '");
+            monsters.Add("            / ' \\)).))/ ' \\");
+            monsters.Add("         (   ( .;''';. .'  )");
+            monsters.Add("          _\\\"__ /    )\\ __\" / _");
+            monsters.Add("            \\/  \\   ' /  \\/");
+            monsters.Add("             .'  '...' ' )");
+            monsters.Add("              / /  |  \\ \\");
+            monsters.Add("             / .   .   . \\");
+            monsters.Add("            /   .     .   \\");
+            monsters.Add("           /   /   |   \\   \\");
+            monsters.Add("         .'   /    b    '.  '.");
+            monsters.Add("     _.-'    /     Bb     '-. '-._");
+            monsters.Add(" _.-'       |      BBb       '-.  '-.");
+            monsters.Add("(________mrf\\____.dBBBb.________)____)");
 
-            artList.Add(1, wizard);
+            artList.Add(1, monsters.ToList());
+            monsters.Clear();
+
+            monsters.Add("        .-\"\"\"\".");
+            monsters.Add("       /       \\");
+            monsters.Add("   __ /   .-.  .\\");
+            monsters.Add("  /  `\\  /   \\/  \\");
+            monsters.Add("  | _ \\/   .==.==.");
+            monsters.Add("  | (   \\  / ____\\__\\");
+            monsters.Add("   \\ \\      (_()(_()");
+            monsters.Add("    \\ \\            '---._");
+            monsters.Add("     \\                   \\_");
+            monsters.Add("  /\\ |`       (__)________ /");
+            monsters.Add(" /  \\|     /\\___ /");
+            monsters.Add("|    \\     \\|| VV");
+            monsters.Add("|     \\     \\| \"\"\"\",");
+            monsters.Add("|      \\     ______)");
+            monsters.Add("\\       \\  /`");
+            monsters.Add("         \\(");
+
+            artList.Add(2, monsters.ToList());
+            monsters.Clear();
+
+            monsters.Add("          _/(               <~\\  /~>               )\\_                 ");
+            monsters.Add("        .~   ~-.            /^-~~-^\\            .-~   ~.               ");
+            monsters.Add("     .-~        ~-._       : /~\\/~\\ :       _.-~        ~-.            ");
+            monsters.Add("  .-~               ~~--.__: \0/\0/ ;__,--~~               ~-.         ");
+            monsters.Add(" /                        ./\\. ^^ ./\\.                        \\        ");
+            monsters.Add(".                         |  ( )( )  |                         .       ");
+            monsters.Add("-~~--.        _.---._    /~   U`'U   ~\\    _.---._        .--~~-       ");
+            monsters.Add("      ~-. .--~       ~~-|              |-~~       ~--. .-~             ");
+            monsters.Add("         ~              |  :        :  |_             ~                ");
+            monsters.Add("                        `\\,'  :  :  `./' ~~--._                        ");
+            monsters.Add("                       .(<___.'  `,___>),--.___~~-.                    ");
+            monsters.Add("                       ~ (((( ~--~ ))))      _.~  _)                   ");
+            monsters.Add("                          ~~~      ~~~/`.--~ _.--~                     ");
+            monsters.Add("                                      \\,~~~~~                          ");
+
+            artList.Add(3, monsters.ToList());
+            monsters.Clear();
+
+            monsters.Add("       .^----^.");
+            monsters.Add("      (= o  O =)");
+            monsters.Add("       (___V__)");
+            monsters.Add("        _|==|_");
+            monsters.Add("   ___/' |--| |");
+            monsters.Add("  / ,._| |  | '");
+            monsters.Add(" | \\__ |__}-|__}");
+            monsters.Add("  \\___)`");
+
+            artList.Add(4, monsters.ToList());
+            monsters.Clear();
+
+            monsters.Add("                        _,--~~~,");
+            monsters.Add("                       .'        `.");
+            monsters.Add("                       |           ;");
+            monsters.Add("                       |           :");
+            monsters.Add("                      /_,-==/     .'");
+            monsters.Add("                    /'`\\*  ;      :");
+            monsters.Add("                  :'    `-        :");
+            monsters.Add("                  `~*,'     .     :");
+            monsters.Add("                     :__.,._  `;  :");
+            monsters.Add("                     `\\'    )  '  `,");
+            monsters.Add("                         \\-/  '     )");
+            monsters.Add("                         :'          \\ _");
+            monsters.Add("                          `~---,-~    `,)");
+            monsters.Add("          ___                   \\     /~`\\");
+            monsters.Add("    \\---__ `;~~~-------------~~~(| _-'    `,");
+            monsters.Add(" ---, ' \\`-._____     _______.---'         \\");
+            monsters.Add(" \\--- `~~-`,      ~~~~~~                     `,");
+            monsters.Add("\\----      )                                   \\");
+            monsters.Add("\\----.  __ /                                    `-");
+            monsters.Add(" \\----'` -~____");
+            monsters.Add("               ~~~~~--------,.___");
+            monsters.Add("                                 ```\\_");
+
+            artList.Add(5, monsters.ToList());
+            monsters.Clear();
+
         }
 
         public static List<string> GetRandom()

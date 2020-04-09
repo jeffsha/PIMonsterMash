@@ -12,7 +12,14 @@ namespace PIMonsterMash {
         static Boolean isMuted = true;
 
         static MusicPlayer() {
-            musicList.Add(0, AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav");
+            musicList.Add(0, AppDomain.CurrentDomain.BaseDirectory + "\\B1.wav");
+            musicList.Add(1, AppDomain.CurrentDomain.BaseDirectory + "\\B2.wav");
+            musicList.Add(2, AppDomain.CurrentDomain.BaseDirectory + "\\B3.wav");
+            musicList.Add(3, AppDomain.CurrentDomain.BaseDirectory + "\\B4.wav");
+            musicList.Add(4, AppDomain.CurrentDomain.BaseDirectory + "\\B5.wav");
+            musicList.Add(5, AppDomain.CurrentDomain.BaseDirectory + "\\B6.wav");
+            musicList.Add(6, AppDomain.CurrentDomain.BaseDirectory + "\\B7.wav");
+            musicList.Add(7, AppDomain.CurrentDomain.BaseDirectory + "\\B8.wav");            
         }
 
         public static string GetRandom() {

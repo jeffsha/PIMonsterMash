@@ -19,9 +19,7 @@ namespace PIMonsterMash
 
         // TODO:
         // Opening Maui Splash Screen
-        // Monster Names
         // AC for monsters (optional)?
-        // More Monsters
         // More Music For Different Monsters
         // Score board - Number of Monsters Killed - Most Damage Dealt
 
@@ -36,7 +34,7 @@ namespace PIMonsterMash
             //Creates new player object and assigned event handlers
             SpawnPlayer();
 
-            Console.Write("Please enter your PI Server:");
+            Console.Write("Please enter your PI Server: ");
             var serverName = Console.ReadLine();
 
             Console.WriteLine("Loading Game, Please Wait...");
@@ -202,17 +200,9 @@ namespace PIMonsterMash
             player.Spawned += (entity) =>
             {
                 messages.Add($"{entity.Name} has joined the battle");
-                //TODO: Can play intro music? 
-                //TODO: Can display "blah blah adventurer joins the battle..." 
             };
 
-            player.Damaged += (entity, e) =>
-            {
-                if (entity.Health <= 0 && monster.Health > 0)
-                {
-                    //TODO: Game over message
-                }
-            };
+            player.Damaged += (entity, e) => {};
 
             player.Spawn();
         }
