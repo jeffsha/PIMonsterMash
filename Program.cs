@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using OSIsoft.AF;
 using OSIsoft.AF.PI;
 using PIMonsterMash.Entities;
@@ -9,7 +10,7 @@ namespace PIMonsterMash
 {
     class Program
     {
-        const int startingHP = 25;
+        const int startingHP = 100;
         const string ATTACKINSTRUCTIONS = "Press A to Attack, S to Slash, F to Firebolt, R to Run, M to toggle Music, or X to eXit!";
 
         static Monster monster;
@@ -17,14 +18,12 @@ namespace PIMonsterMash
         static StatsManager statsManager;
         static List<string> messages = new List<string>();
 
-        // TODO:
-        // Opening Maui Splash Screen
-        // AC for monsters (optional)?
-        // More Music For Different Monsters
-        // Score board - Number of Monsters Killed - Most Damage Dealt
-
         static void Main(string[] args)
         {
+            SoundPlayer soundDevice = new SoundPlayer();
+            soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Forest.wav";
+            soundDevice.PlayLooping();
+
             //Required Game Initialization
             InitializeGame();
 
@@ -44,7 +43,6 @@ namespace PIMonsterMash
 
             var terminationKey = new ConsoleKeyInfo('x', ConsoleKey.X, false, false, false);
             ConsoleKeyInfo currentKey;
-
 
             // Spawn first monster
             monster = SpawnMonster();
@@ -265,6 +263,9 @@ namespace PIMonsterMash
         {
             var latestScores = statsManager.GetScoreStats();
 
+            SoundPlayer soundDevice = new SoundPlayer();
+            soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\GameOver.wav";
+            soundDevice.Play();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(
 @"
@@ -286,6 +287,9 @@ namespace PIMonsterMash
             Console.WriteLine("Presseth a key to seeeth thy scores.");
             Console.ReadKey();
 
+            soundDevice.Stop();
+            soundDevice.SoundLocation = AppDomain.CurrentDomain.BaseDirectory + "\\Score.wav";
+            soundDevice.PlayLooping();
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.Green;
