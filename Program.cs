@@ -176,11 +176,19 @@ namespace PIMonsterMash
 
         private static void ShowSplashScreen()
         {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.BackgroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.White;
             foreach (var line in Art.splashScreenList)
             {
                 Console.WriteLine(line);
             }
-            Console.WriteLine("Press any key to continue...");
+            Console.ResetColor();
+            Utils.AlignText("Press any key to continue...", Utils.LineLocation.BottomLeft);
             Console.ReadKey();
             Console.Clear();
         }
