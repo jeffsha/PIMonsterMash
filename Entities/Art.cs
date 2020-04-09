@@ -4,9 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIMonsterMash {
-    static class Art {
+namespace PIMonsterMash
+{
+    static class Art
+    {
         static Dictionary<int, List<string>> artList = new Dictionary<int, List<string>>();
+        public static List<string> splashScreenList = new List<string>()
+        {
+            @"                        __      __         .__                                         __                                       ",
+            @"                       /  \    /  \  ____  |  |    ____   ____    _____    ____      _/  |_  ____                               ",
+            @"                       \   \/\/   /_/ __ \ |  |  _/ ___\ /  _ \  /     \ _/ __ \     \   __\/  _ \                              ",
+            @"                        \        / \  ___/ |  |__\  \___(  <_> )|  Y Y  \\  ___/      |  | (  <_> )                             ",
+            @"                         \__/\  /   \___  >|____/ \___  >\____/ |__|_|  / \___  >     |__|  \____/                              ",
+            @"                              \/        \/            \/              \/      \/                                                ",
+            @"                                                                                                                                ",
+            @"  __________ .___        _____                             __                         _____                   .__         ._.._.",
+            @"  \______   \|   |      /     \    ____    ____    _______/  |_   ____ _______       /     \  _____     ______|  |__      | || |",
+            @"   |     ___/|   |     /  \ /  \  /  _ \  /    \  /  ___/\   __\_/ __ \\_  __ \     /  \ /  \ \__  \   /  ___/|  |  \     | || |",
+            @"   |    |    |   |    /    Y    \(  <_> )|   |  \ \___ \  |  |  \  ___/ |  | \/    /    Y    \ / __ \_ \___ \ |   Y  \     \| \|",
+            @"   |____|    |___|    \____|__  / \____/ |___|  //____  > |__|   \___  >|__|       \____|__  /(____  //____  >|___|  /     __ __",
+            @"                              \/              \/      \/             \/                    \/      \/      \/      \/      \/ \/",
+        };
 
         static Art() {
             var monsters = new List<string>();
@@ -128,10 +146,10 @@ namespace PIMonsterMash {
 
         }
 
-        public static List<string> GetRandom() {
+        public static List<string> GetRandom()
+        {
             var rnd = new Random(DateTime.Now.Millisecond);
             return artList[rnd.Next(0, artList.Count)];
         }
-
     }
 }
