@@ -318,6 +318,9 @@ namespace PIMonsterMash
             Console.WriteLine("All your base are belong to us.");
 
             Console.WriteLine();
+            Console.WriteLine("What can we say except, you're welcome!");
+
+            Console.WriteLine();
             Console.WriteLine("Presseth a key to leave thy scores.");
             Console.ReadKey();
         }
